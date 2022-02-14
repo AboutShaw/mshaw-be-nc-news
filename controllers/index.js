@@ -2,7 +2,8 @@ const {
   selectTopics,
   selectArticles,
   selectUsers,
-  selectArticleById
+  selectArticleById,
+  articleComments
 } = require("../models/index");
 
 exports.getTopics = (req, res, next) => {
@@ -27,5 +28,12 @@ exports.getArticle = (req, res, next) => {
   const { article_id } = req.params;
   selectArticleById(article_id).then((article) => {
     res.status(200).send({ article })})
+    .catch(next)
+}
+
+exports.getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+  articleComments(article_id).then((comments) => {
+    res.status(200).send({ comments })})
     .catch(next)
 }
