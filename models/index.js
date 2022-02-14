@@ -1,4 +1,3 @@
-const { result } = require("lodash");
 const db = require("../db");
 
 exports.selectTopics = () => {

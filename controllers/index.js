@@ -1,4 +1,3 @@
-const { update } = require("lodash");
 const {
   selectTopics,
   selectArticles,
