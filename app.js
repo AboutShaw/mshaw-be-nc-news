@@ -1,6 +1,7 @@
 const express = require("express");
 const {
-  getTopics
+  getTopics,
+  getArticles
 } = require("./controllers/index");
 
 const {
@@ -14,6 +15,7 @@ app.use(express.json());
 // Requires and util functions above this line -----
 // API requests below this line -----
 app.get(`/api/topics`, getTopics);
+app.get(`/api/articles`, getArticles);
 
 
 
