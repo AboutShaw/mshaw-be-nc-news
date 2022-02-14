@@ -73,3 +73,33 @@ describe(`/api/articles tests`, () => {
         })
     })
 })
+
+describe(`/api/users tests`, () => {
+    describe(`GET tests`, () => {
+        test(`/api/users, returns an array of objects`, () => {
+            return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body;
+                users.forEach(user => 
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            username: expect.any(String)
+                        })
+                    )
+                )
+            })
+        })
+    })
+    describe(`Error handling tests`, () => {
+        test(`404 - Path not found for /api/topi`, () => {
+            return request(app)
+                .get('/api/uset')
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe('Route not found');
+      });
+        })
+    })
+})
