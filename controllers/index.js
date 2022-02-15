@@ -3,7 +3,8 @@ const {
   selectArticles,
   selectUsers,
   selectArticleById,
-  articleComments
+  articleComments,
+  updateArticleById
 } = require("../models/index");
 
 exports.getTopics = (req, res, next) => {
@@ -33,7 +34,17 @@ exports.getArticle = (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
+  console.log(req.params, 'controller 1')
+  console.log(article_id, 'controller 2')
   articleComments(article_id).then((comments) => {
     res.status(200).send({ comments })})
     .catch(next)
 }
+
+exports.patchArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  updateArticleById(article_id, inc_votes).then((article) => {
+    res.status(200).send({ article })})
+    .catch(next)
+} 
