@@ -105,7 +105,7 @@ describe(`GET /api/users tests`, () => {
     })
 })
 
-describe.only(`GET /api/articles/:article_id tests`, () => {
+describe(`GET /api/articles/:article_id tests`, () => {
     describe(`GET tests`, () => {
         test(`/api/articles/:article_id, returns an array with single object, has been refactored to include comment count`, () => {
             return request(app)
