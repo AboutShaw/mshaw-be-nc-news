@@ -198,7 +198,7 @@ describe(`GET /api/articles/:article_id/comments tests`, () => {
     })
 })
 
-describe.only(`PATCH /api/articles/:article_id tests`, () => {
+describe(`PATCH /api/articles/:article_id tests`, () => {
     describe(`PATCH tests`, () => {
         test(`PATCH /api/articles/:article_id, updates the number of votes +10 on an article and returns the article with latest info`, () => {
             const articleUpdate = {
