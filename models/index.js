@@ -11,15 +11,19 @@ exports.selectTopics = () => {
 
 exports.selectArticles = () => {
     return db
-    .query(`    SELECT  author,
-                        title,
-                        article_id,
-                        topic,
-                        created_at,
-                        votes
-                FROM    articles
-                ORDER BY created_at DESC;`)
+    .query(`    SELECT  A.author,
+                        A.title,
+                        A.article_id,
+                        A.topic,
+                        A.created_at,
+                        A.votes,
+                        COUNT(B.article_id) AS comment_count
+                    FROM    articles A
+                    LEFT JOIN comments B ON A.article_id=A.article_id
+                    GROUP BY A.article_id
+                    ORDER BY created_at DESC;`)
     .then((result) => {
+        console.log(result.rows)
         return result.rows;
     });
 };

@@ -40,7 +40,7 @@ describe(`/api/topics tests`, () => {
 
 describe(`GET /api/articles tests`, () => {
     describe(`GET tests`, () => {
-        test(`/api/articles, returns an array of objects sorted in desc order by created date`, () => {
+        test(`/api/articles, returns an array of objects sorted in desc order by created date, inc refactor to include comment_count`, () => {
             return request(app)
             .get("/api/articles")
             .expect(200)
@@ -56,10 +56,12 @@ describe(`GET /api/articles tests`, () => {
                             article_id: expect.any(Number),
                             topic: expect.any(String),
                             created_at: expect.any(String),
-                            votes: expect.any(Number)
+                            votes: expect.any(Number),
+                            comment_count: expect.any(String)
                         })
                     )
                 )
+                expect(articles.length).toBe(12)
             })
         })
     })
