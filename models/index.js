@@ -92,6 +92,31 @@ exports.updateArticleById = (article_id, inc_votes) => {
                             votes;`,
                 [inc_votes, article_id])
     .then(({ rows }) => {
-        return rows[0];
+        const rest = rows;
+        if(rest.length === 0) {
+            return Promise.reject({
+            status: 404,
+            msg: `No articles with ID: ${article_id}`
+        })
+    }
+    return rest[0];
     });
 }
+
+exports.deleteComment = (comment_id) => {
+    return db
+        .query(`DELETE FROM     comments 
+                WHERE           comment_id = $1
+                RETURNING       *;`,
+                [comment_id])
+        .then(({ rows }) => {
+            const rest = rows;
+            if(rest.length === 0) {
+                return Promise.reject({
+                status: 404,
+                msg: `No comments with ID: ${comment_id}`
+            })
+        }
+        return rows[0]
+        });
+};

@@ -4,7 +4,8 @@ const {
   selectUsers,
   selectArticleById,
   articleComments,
-  updateArticleById
+  updateArticleById,
+  deleteComment
 } = require("../models/index");
 
 exports.getTopics = (req, res, next) => {
@@ -46,3 +47,10 @@ exports.patchArticle = (req, res, next) => {
     res.status(200).send({ article })})
     .catch(next)
 } 
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteComment(comment_id).then((comment) => {
+    res.status(204).send({ comment })})
+    .catch(next)
+}

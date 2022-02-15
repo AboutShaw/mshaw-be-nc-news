@@ -248,7 +248,35 @@ describe(`PATCH /api/articles/:article_id tests`, () => {
     describe(`Error handling tests`, () => {
         test(`404 - Path not found for /api/topi`, () => {
             return request(app)
-            .get('/api/artivle/1')
+            .patch('/api/artivle/1')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Route not found');
+            });
+        })
+        test(`404 - No article with ID 666`, () => {
+            return request(app)
+            .patch(`/api/articles/666`)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe(`No articles with ID: 666`);
+            })
+        })
+    })
+})
+
+describe(`DELETE /api/comments/:comment_id tests`, () => {
+    describe(`DELETE tests`, () => {
+        test('DELETE /api/comments/:comment_id, status:204, responds with an empty response body', () => {
+            return request(app)
+            .delete('/api/comments/2')
+            .expect(204)
+        })
+    })
+    describe(`Error handling tests`, () => {
+        test(`404 - Path not found for /api/topi`, () => {
+            return request(app)
+            .delete('/api/commcnts/1')
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe('Route not found');
@@ -256,10 +284,10 @@ describe(`PATCH /api/articles/:article_id tests`, () => {
         })
         test(`400 - No article with ID 666`, () => {
             return request(app)
-            .get(`/api/articles/666`)
+            .delete(`/api/comments/666`)
             .expect(404)
             .then(({ body }) => {
-                expect(body.msg).toBe(`No articles with ID: 666`);
+                expect(body.msg).toBe(`No comments with ID: 666`);
             })
         })
     })
