@@ -198,9 +198,9 @@ describe(`GET /api/articles/:article_id/comments tests`, () => {
     })
 })
 
-describe(`PATCH /api/articles/:article_id tests`, () => {
+describe.only(`PATCH /api/articles/:article_id tests`, () => {
     describe(`PATCH tests`, () => {
-        test(`PATCH /api/articles/:article_id, updates the number of votes on an article and returns the article with latest info`, () => {
+        test(`PATCH /api/articles/:article_id, updates the number of votes +10 on an article and returns the article with latest info`, () => {
             const articleUpdate = {
                 inc_votes: 10
             }
@@ -218,6 +218,28 @@ describe(`PATCH /api/articles/:article_id tests`, () => {
                         topic: expect.any(String),
                         created_at: expect.any(String),
                         votes: 110
+                    })
+                )
+            })
+        })
+        test(`PATCH /api/articles/:article_id, updates the number of votes -20 on an article and returns the article with latest info`, () => {
+            const articleUpdate = {
+                inc_votes: -20
+            }
+            return request(app)
+            .patch("/api/articles/1")
+            .send(articleUpdate)
+            .expect(200)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: 1,
+                        topic: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: 80
                     })
                 )
             })
