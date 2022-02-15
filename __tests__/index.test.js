@@ -113,7 +113,6 @@ describe(`GET /api/articles/:article_id tests`, () => {
             .expect(200)
             .then(({ body }) => {
                 const { article } = body;
-                console.log(article)
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: 1,

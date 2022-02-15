@@ -34,8 +34,6 @@ exports.getArticle = (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
-  console.log(req.params, 'controller 1')
-  console.log(article_id, 'controller 2')
   articleComments(article_id).then((comments) => {
     res.status(200).send({ comments })})
     .catch(next)
