@@ -105,9 +105,9 @@ describe(`GET /api/users tests`, () => {
     })
 })
 
-describe(`GET /api/articles/:article_id tests`, () => {
+describe.only(`GET /api/articles/:article_id tests`, () => {
     describe(`GET tests`, () => {
-        test(`/api/articles/:article_id, returns an array with single object`, () => {
+        test(`/api/articles/:article_id, returns an array with single object, has been refactored to include comment count`, () => {
             return request(app)
             .get("/api/articles/1")
             .expect(200)
@@ -121,7 +121,8 @@ describe(`GET /api/articles/:article_id tests`, () => {
                         author: "butter_bridge",
                         body: "I find this existence challenging",
                         created_at: "2020-07-09T20:11:00.000Z",
-                        votes: 100
+                        votes: 100,
+                        comment_count: "18"
                     })
                 )
             })
