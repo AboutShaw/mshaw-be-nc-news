@@ -35,15 +35,18 @@ exports.selectUsers = () => {
 
 exports.selectArticleById = (article_id) => {
     return db
-    .query(`    SELECT  author,
-                        title,
-                        article_id,
-                        body,
-                        topic,
-                        created_at,
-                        votes
-                FROM    articles
-                WHERE   article_id = $1`,
+    .query(`    SELECT  A.author,
+                        A.title,
+                        A.article_id,
+                        A.body,
+                        A.topic,
+                        A.created_at,
+                        A.votes,
+                        COUNT(B.article_id) AS comment_count
+                FROM    articles A
+                LEFT JOIN comments B ON A.article_id=A.article_id
+                WHERE   A.article_id = $1
+                GROUP BY A.article_id;`,
                 [article_id])
     .then(({rows}) => {
         const rest = rows[0];
@@ -53,6 +56,7 @@ exports.selectArticleById = (article_id) => {
             msg: `No articles with ID: ${article_id}`
           });
         }
+        console.log(rest)
         return rest;
       });
   };
