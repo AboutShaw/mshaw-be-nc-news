@@ -282,7 +282,7 @@ describe(`DELETE /api/comments/:comment_id tests`, () => {
                 expect(body.msg).toBe('Route not found');
             });
         })
-        test(`400 - No article with ID 666`, () => {
+        test(`404 - No article with ID 666`, () => {
             return request(app)
             .delete(`/api/comments/666`)
             .expect(404)
