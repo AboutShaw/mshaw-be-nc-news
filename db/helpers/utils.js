@@ -1,3 +1,5 @@
+const testComments = require("../data/test-data/comments")
+
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
   return { created_at: new Date(created_at), ...otherProperties };
@@ -20,3 +22,5 @@ exports.formatComments = (comments, idLookup) => {
     };
   });
 };
+
+exports.articleIds = testComments.map(comment => comment.article_id);

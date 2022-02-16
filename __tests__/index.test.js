@@ -63,16 +63,6 @@ describe(`GET /api/articles tests`, () => {
             })
         })
     })
-    describe(`Error handling tests`, () => {
-        test(`404 - Path not found for /api/topi`, () => {
-            return request(app)
-                .get('/api/artivles')
-                .expect(404)
-                .then(({ body }) => {
-                    expect(body.msg).toBe('Route not found');
-                });
-        })
-    })
 })
 
 describe(`GET /api/users tests`, () => {
@@ -91,16 +81,6 @@ describe(`GET /api/users tests`, () => {
                     )
                 )
             })
-        })
-    })
-    describe(`Error handling tests`, () => {
-        test(`404 - Path not found for /api/topi`, () => {
-            return request(app)
-                .get('/api/uset')
-                .expect(404)
-                .then(({ body }) => {
-                    expect(body.msg).toBe('Route not found');
-      });
         })
     })
 })
@@ -128,14 +108,6 @@ describe(`GET /api/articles/:article_id tests`, () => {
         })
     })
     describe(`Error handling tests`, () => {
-        test(`404 - Path not found for /api/topi`, () => {
-            return request(app)
-            .get('/api/artivle/1')
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe('Route not found');
-            });
-        })
         test(`400 - No article with ID 666`, () => {
             return request(app)
             .get(`/api/articles/666`)
@@ -171,14 +143,6 @@ describe(`GET /api/articles/:article_id/comments tests`, () => {
         })
     })
     describe(`Error handling tests`, () => {
-        test(`404 - Path not found for /api/artivle/1/comments`, () => {
-            return request(app)
-            .get('/api/artivle/1/comments')
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe('Route not found');
-            });
-        })
         test(`404 - No article with ID 666`, () => {
             return request(app)
             .get(`/api/articles/666/comments`)
@@ -246,20 +210,55 @@ describe(`PATCH /api/articles/:article_id tests`, () => {
         })
     })
     describe(`Error handling tests`, () => {
-        test(`404 - Path not found for /api/topi`, () => {
-            return request(app)
-            .get('/api/artivle/1')
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe('Route not found');
-            });
-        })
         test(`400 - No article with ID 666`, () => {
             return request(app)
             .get(`/api/articles/666`)
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe(`No articles with ID: 666`);
+            })
+        })
+    })
+})
+
+describe(`POST /api/articles/:article_id/comments tests`, () => {
+    describe(`POST tests`, () => {
+        test(`POST /api/articles/:article_id/comments creates a new comment and returns the posted comment`, () => {
+            const postThis = {
+                username: "icellusedkars",
+                body: "Russia's defence ministry says some troops positioned on the border with Ukraine are returning to their bases after completing drills"
+            };
+            return request(app)
+            .post(`/api/articles/4/comments`)
+            .send(postThis)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(comment).toEqual(
+                    expect.objectContaining({
+                        comment_id: expect.any(Number),
+                        body: "Russia's defence ministry says some troops positioned on the border with Ukraine are returning to their bases after completing drills",
+                        article_id: 4,
+                        author: "icellusedkars",
+                        votes: 0,
+                        created_at: expect.any(String)
+                    })
+                )
+            })
+        })
+    })
+    describe(`Error handling tests`, () => {
+        test.only(`400 - No article with ID 666`, () => {
+            const postThis = {
+                username: "icellusedkars",
+                body: "Russia's defence ministry says some troops positioned on the border with Ukraine are returning to their bases after completing drills"
+            };
+            return request(app)
+            .post(`/api/articles/666/comments`)
+            .send(postThis)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe(`No articles or comments for article with the ID: 666`);
             })
         })
     })

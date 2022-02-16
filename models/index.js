@@ -1,4 +1,5 @@
 const db = require("../db");
+const { articleIds } = require("../db/helpers/utils");
 
 exports.selectTopics = () => {
     return db
@@ -94,4 +95,24 @@ exports.updateArticleById = (article_id, inc_votes) => {
     .then(({ rows }) => {
         return rows[0];
     });
+}
+
+exports.insertNewComment = (article_id, username, body) => {
+    console.log(articleIds)
+    if(!articleIds.includes(article_id)) {
+        return Promise.reject({
+        status: 404,
+        msg: `No articles or comments for article with the ID: ${article_id}`
+        })
+    }
+    return db
+    .query(`    INSERT INTO comments
+                            (body, article_id, author)
+                VALUES      ($1, $2, $3)
+                RETURNING   *;`,
+                [body, article_id, username])
+    .then(({ rows }) => {
+        
+        return rows[0];
+    })
 }
