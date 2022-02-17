@@ -24,7 +24,6 @@ exports.selectArticles = () => {
                     GROUP BY A.article_id
                     ORDER BY created_at DESC;`)
     .then((result) => {
-        console.log(result.rows)
         return result.rows;
     });
 };
@@ -61,7 +60,6 @@ exports.selectArticleById = (article_id) => {
             msg: `No articles with ID: ${article_id}`
           });
         }
-        console.log(rest)
         return rest;
       });
   };
@@ -155,8 +153,6 @@ exports.insertNewComment = (article_id, username, body) => {
         msg: `No articles or comments for article with the ID: ${article_id}`
         })
     }
-    console.log(typeof username)
-    console.log(typeof body)
     if(typeof username !== `string` || typeof body !== `string`) {
         return Promise.reject({
             status: 400,
