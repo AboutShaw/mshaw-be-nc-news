@@ -1,5 +1,5 @@
 const db = require("../db");
-const { articleIds } = require("../db/helpers/utils");
+const { articleIds, usernames } = require("../db/helpers/utils");
 
 exports.selectTopics = () => {
     return db
@@ -50,7 +50,7 @@ exports.selectArticleById = (article_id) => {
         const rest = rows[0];
         if(!rest) {
           return Promise.reject({
-            status: 404,
+            status: 400,
             msg: `No articles with ID: ${article_id}`
           });
         }
@@ -72,7 +72,7 @@ exports.articleComments = (article_id) => {
         const rest = rows;
         if(rest.length === 0) {
             return Promise.reject({
-            status: 404,
+            status: 400,
             msg: `No articles or comments for article with the ID: ${article_id}`
             })
         }
@@ -81,6 +81,12 @@ exports.articleComments = (article_id) => {
 };
 
 exports.updateArticleById = (article_id, inc_votes) => {
+    if(!articleIds.includes(parseInt(article_id))) {
+        return Promise.reject({
+        status: 400,
+        msg: `No articles or comments for article with the ID: ${article_id}`
+        })
+    }
     return db
     .query(`    UPDATE      articles
                 SET         votes = votes + $1
@@ -98,12 +104,31 @@ exports.updateArticleById = (article_id, inc_votes) => {
 }
 
 exports.insertNewComment = (article_id, username, body) => {
-    console.log(articleIds)
-    if(!articleIds.includes(article_id)) {
+    if(!usernames.includes(username)) {
         return Promise.reject({
-        status: 404,
+            status: 400,
+            msg: `User not registered`
+        })
+    }
+    if(username === undefined || body === undefined) {
+        return Promise.reject({
+            status: 400,
+            msg: `Missing part of post request`
+        })
+    } 
+    if(!articleIds.includes(parseInt(article_id))) {
+        return Promise.reject({
+        status: 400,
         msg: `No articles or comments for article with the ID: ${article_id}`
         })
+    }
+    console.log(typeof username)
+    console.log(typeof body)
+    if(typeof username !== `string` || typeof body !== `string`) {
+        return Promise.reject({
+            status: 400,
+            msg: `Usernames and comment bodies should be text`
+            })
     }
     return db
     .query(`    INSERT INTO comments

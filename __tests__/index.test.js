@@ -111,7 +111,7 @@ describe(`GET /api/articles/:article_id tests`, () => {
         test(`400 - No article with ID 666`, () => {
             return request(app)
             .get(`/api/articles/666`)
-            .expect(404)
+            .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe(`No articles with ID: 666`);
             })
@@ -143,15 +143,15 @@ describe(`GET /api/articles/:article_id/comments tests`, () => {
         })
     })
     describe(`Error handling tests`, () => {
-        test(`404 - No article with ID 666`, () => {
+        test(`400 - No article with ID 666`, () => {
             return request(app)
             .get(`/api/articles/666/comments`)
-            .expect(404)
+            .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe(`No articles or comments for article with the ID: 666`);
             })
         })
-        test(`404 - ID must be a number`, () => {
+        test(`400 - ID must be a number`, () => {
             return request(app)
             .get(`/api/articles/banana/comments`)
             .expect(400)
@@ -213,7 +213,7 @@ describe(`PATCH /api/articles/:article_id tests`, () => {
         test(`400 - No article with ID 666`, () => {
             return request(app)
             .get(`/api/articles/666`)
-            .expect(404)
+            .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe(`No articles with ID: 666`);
             })
@@ -229,7 +229,7 @@ describe(`POST /api/articles/:article_id/comments tests`, () => {
                 body: "Russia's defence ministry says some troops positioned on the border with Ukraine are returning to their bases after completing drills"
             };
             return request(app)
-            .post(`/api/articles/4/comments`)
+            .post(`/api/articles/1/comments`)
             .send(postThis)
             .expect(201)
             .then(({ body }) => {
@@ -238,7 +238,7 @@ describe(`POST /api/articles/:article_id/comments tests`, () => {
                     expect.objectContaining({
                         comment_id: expect.any(Number),
                         body: "Russia's defence ministry says some troops positioned on the border with Ukraine are returning to their bases after completing drills",
-                        article_id: 4,
+                        article_id: 1,
                         author: "icellusedkars",
                         votes: 0,
                         created_at: expect.any(String)
@@ -248,7 +248,7 @@ describe(`POST /api/articles/:article_id/comments tests`, () => {
         })
     })
     describe(`Error handling tests`, () => {
-        test.only(`400 - No article with ID 666`, () => {
+        test(`400 - No article with ID 666`, () => {
             const postThis = {
                 username: "icellusedkars",
                 body: "Russia's defence ministry says some troops positioned on the border with Ukraine are returning to their bases after completing drills"
@@ -256,9 +256,51 @@ describe(`POST /api/articles/:article_id/comments tests`, () => {
             return request(app)
             .post(`/api/articles/666/comments`)
             .send(postThis)
-            .expect(404)
+            .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe(`No articles or comments for article with the ID: 666`);
+                expect(body.msg)
+                .toBe(`No articles or comments for article with the ID: 666`);
+            })
+        })
+        test(`400 - missing part of post request`, () => {
+            const postThis = {
+                username: "icellusedkars"
+            };
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(postThis)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg)
+                .toBe(`Missing part of post request`)
+            })
+        })
+        test(`400 - username not registered`, () => {
+            const postThis = {
+                username: "tallyWacker",
+                body: "Russia's defence ministry says some troops positioned on the border with Ukraine are returning to their bases after completing drills"
+            };
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(postThis)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg)
+                .toBe(`User not registered`);
+            })
+        })
+        test(`400 - Input of wrong data type`, () => {
+            const postThis = {
+                username: "icellusedkars",
+                body: 1234567980
+            };
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(postThis)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg)
+                .toBe(`Usernames and comment bodies should be text`);
             })
         })
     })

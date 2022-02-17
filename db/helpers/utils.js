@@ -1,4 +1,5 @@
 const testComments = require("../data/test-data/comments")
+const testUsers = require(`../data/test-data/users`)
 
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
@@ -24,3 +25,4 @@ exports.formatComments = (comments, idLookup) => {
 };
 
 exports.articleIds = testComments.map(comment => comment.article_id);
+exports.usernames = testUsers.map(user => user.username);
