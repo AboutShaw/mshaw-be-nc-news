@@ -4,7 +4,8 @@ const {
   selectUsers,
   selectArticleById,
   articleComments,
-  updateArticleById
+  updateArticleById,
+  insertNewComment
 } = require("../models/index");
 
 exports.getTopics = (req, res, next) => {
@@ -46,3 +47,11 @@ exports.patchArticle = (req, res, next) => {
     res.status(200).send({ article })})
     .catch(next)
 } 
+
+exports.newComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+  insertNewComment(article_id, username, body).then((comment) => {
+    res.status(201).send({ comment })})
+    .catch(next)
+};
