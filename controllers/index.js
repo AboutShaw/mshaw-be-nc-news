@@ -5,6 +5,7 @@ const {
   selectArticleById,
   articleComments,
   updateArticleById,
+  deleteComment,
   insertNewComment
 } = require("../models/index");
 
@@ -48,6 +49,13 @@ exports.patchArticle = (req, res, next) => {
     .catch(next)
 } 
 
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteComment(comment_id).then((comment) => {
+    res.status(204).send({ comment })})
+    .catch(next)
+}
+
 exports.newComment = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
@@ -55,3 +63,4 @@ exports.newComment = (req, res, next) => {
     res.status(201).send({ comment })})
     .catch(next)
 };
+
