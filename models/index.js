@@ -1,4 +1,5 @@
 const db = require("../db");
+const { articleIds, usernames } = require("../db/helpers/utils");
 
 exports.selectTopics = () => {
     return db
@@ -11,15 +12,19 @@ exports.selectTopics = () => {
 
 exports.selectArticles = () => {
     return db
-    .query(`    SELECT  author,
-                        title,
-                        article_id,
-                        topic,
-                        created_at,
-                        votes
-                FROM    articles
-                ORDER BY created_at DESC;`)
+    .query(`    SELECT  A.author,
+                        A.title,
+                        A.article_id,
+                        A.topic,
+                        A.created_at,
+                        A.votes,
+                        COUNT(B.article_id) AS comment_count
+                    FROM    articles A
+                    LEFT JOIN comments B ON A.article_id=A.article_id
+                    GROUP BY A.article_id
+                    ORDER BY created_at DESC;`)
     .then((result) => {
+        console.log(result.rows)
         return result.rows;
     });
 };
@@ -35,24 +40,28 @@ exports.selectUsers = () => {
 
 exports.selectArticleById = (article_id) => {
     return db
-    .query(`    SELECT  author,
-                        title,
-                        article_id,
-                        body,
-                        topic,
-                        created_at,
-                        votes
-                FROM    articles
-                WHERE   article_id = $1`,
+    .query(`    SELECT  A.author,
+                        A.title,
+                        A.article_id,
+                        A.body,
+                        A.topic,
+                        A.created_at,
+                        A.votes,
+                        COUNT(B.article_id) AS comment_count
+                FROM    articles A
+                LEFT JOIN comments B ON A.article_id=A.article_id
+                WHERE   A.article_id = $1
+                GROUP BY A.article_id;`,
                 [article_id])
     .then(({rows}) => {
         const rest = rows[0];
         if(!rest) {
           return Promise.reject({
-            status: 404,
+            status: 400,
             msg: `No articles with ID: ${article_id}`
           });
         }
+        console.log(rest)
         return rest;
       });
   };
@@ -71,7 +80,7 @@ exports.articleComments = (article_id) => {
         const rest = rows;
         if(rest.length === 0) {
             return Promise.reject({
-            status: 404,
+            status: 400,
             msg: `No articles or comments for article with the ID: ${article_id}`
             })
         }
@@ -80,6 +89,12 @@ exports.articleComments = (article_id) => {
 };
 
 exports.updateArticleById = (article_id, inc_votes) => {
+    if(!articleIds.includes(parseInt(article_id))) {
+        return Promise.reject({
+        status: 400,
+        msg: `No articles or comments for article with the ID: ${article_id}`
+        })
+    }
     return db
     .query(`    UPDATE      articles
                 SET         votes = votes + $1
@@ -120,3 +135,42 @@ exports.deleteComment = (comment_id) => {
         return rows[0]
         });
 };
+
+exports.insertNewComment = (article_id, username, body) => {
+    if(!usernames.includes(username)) {
+        return Promise.reject({
+            status: 400,
+            msg: `User not registered`
+        })
+    }
+    if(username === undefined || body === undefined) {
+        return Promise.reject({
+            status: 400,
+            msg: `Missing part of post request`
+        })
+    } 
+    if(!articleIds.includes(parseInt(article_id))) {
+        return Promise.reject({
+        status: 400,
+        msg: `No articles or comments for article with the ID: ${article_id}`
+        })
+    }
+    console.log(typeof username)
+    console.log(typeof body)
+    if(typeof username !== `string` || typeof body !== `string`) {
+        return Promise.reject({
+            status: 400,
+            msg: `Usernames and comment bodies should be text`
+            })
+    }
+    return db
+    .query(`    INSERT INTO comments
+                            (body, article_id, author)
+                VALUES      ($1, $2, $3)
+                RETURNING   *;`,
+                [body, article_id, username])
+    .then(({ rows }) => {
+        
+        return rows[0];
+    })
+}
