@@ -77,6 +77,7 @@ exports.newComment = (req, res, next) => {
 };
 
 exports.getEndpoints = (req, res, next) => {
-    res.send(200).send(apis)
+  //console.log(apis)
+    res.status(200).send(apis)
     .catch(next)
 };

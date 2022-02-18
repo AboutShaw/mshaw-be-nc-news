@@ -415,3 +415,14 @@ describe(`GET /api/articles tests V2 including queries  `, () => {
         })
     })
 })
+
+describe.only(`GET /api returns a JSON with all possible endpoints`, () => {
+    test(`/api returns correctly`, () => {
+        return request(app)
+        .get(`/api`)
+        .expect(200)
+        .then(({ body }) => {
+            expect(typeof body).toBe("object")
+        })
+    })
+})
