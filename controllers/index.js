@@ -7,8 +7,11 @@ const {
   updateArticleById,
   deleteComment,
   insertNewComment,
-  sortArticles
+  sortArticles,
+  returnEndPoints
 } = require("../models/index");
+
+const apis = require(`../endpoints.json`)
 
 exports.getTopics = (req, res, next) => {
   selectTopics().then((topics) => {
@@ -73,3 +76,7 @@ exports.newComment = (req, res, next) => {
     .catch(next)
 };
 
+exports.getEndpoints = (req, res, next) => {
+    res.send(200).send(apis)
+    .catch(next)
+};

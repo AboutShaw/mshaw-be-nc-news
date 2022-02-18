@@ -7,7 +7,8 @@ const {
   getArticleComments,
   patchArticle,
   deleteCommentById,
-  newComment
+  newComment,
+  getEndpoints
 } = require("./controllers/index");
 
 const {
@@ -25,6 +26,7 @@ app.get(`/api/articles`, getArticles);
 app.get(`/api/users`, getUsers);
 app.get(`/api/articles/:article_id`, getArticle);
 app.get(`/api/articles/:article_id/comments`, getArticleComments);
+app.get(`/api`, getEndpoints)
 
 app.patch(`/api/articles/:article_id`, patchArticle);
 
