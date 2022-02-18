@@ -412,7 +412,7 @@ describe(`GET /api/articles tests V2 including queries  `, () => {
             })
         })
     })
-    describe.only(`Error handling tests`, () => {
+    describe(`Error handling tests`, () => {
         test(`400 - Invalid topic returned as error`, () => {
             return request(app)
             .get(`/api/articles?topic=banana`)

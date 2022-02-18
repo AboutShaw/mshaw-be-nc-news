@@ -69,8 +69,6 @@ exports.sortArticles = (sorter=`created_at`, order=`DESC`, topic) => {
             msg: `Topic: ${topic}, does not exist`
         });
     } else {
-        console.log(`here`)
-        console.log(typeof topic)
         const topicWhere = `WHERE A.topic='${topic}'`
         return db
         .query(`    SELECT  A.author,
@@ -86,7 +84,6 @@ exports.sortArticles = (sorter=`created_at`, order=`DESC`, topic) => {
                         GROUP BY A.article_id
                         ORDER BY ${sorter} ${order};`)
         .then((result) => {
-            console.log(result.rows)
             return result.rows;
         })
     }
