@@ -1,5 +1,6 @@
 const testComments = require("../data/test-data/comments")
 const testUsers = require(`../data/test-data/users`)
+const testArticles = require(`../data/test-data/articles`)
 
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };

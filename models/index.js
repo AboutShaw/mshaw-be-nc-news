@@ -1,5 +1,5 @@
 const db = require("../db");
-const { articleIds, usernames } = require("../db/helpers/utils");
+const { articleIds, usernames, testTopics } = require("../db/helpers/utils");
 
 exports.selectTopics = () => {
     return db
@@ -27,6 +27,71 @@ exports.selectArticles = () => {
         return result.rows;
     });
 };
+
+exports.sortArticles = (sorter=`created_at`, order=`DESC`, topic) => {
+    const sortParams = ['author',
+                        'title',
+                        'article_id',
+                        'topic',
+                        'created_at',
+                        'votes',
+                        'comment_count'];
+    const orderParams = ['ASC', 'DESC'];
+    order = order.toLocaleUpperCase();
+    if(!sortParams.includes(sorter) || !orderParams.includes(order)){
+        return Promise.reject({
+            status: 400,
+            msg: `Query not allowed`
+        });
+    }
+    if(topic === undefined) {
+        return db
+        .query(`    SELECT  A.author,
+                            A.title,
+                            A.article_id,
+                            A.topic,
+                            A.created_at,
+                            A.votes,
+                            COUNT(B.article_id) AS comment_count
+                        FROM    articles A
+                        LEFT JOIN comments B ON A.article_id=A.article_id
+                        GROUP BY A.article_id
+                        ORDER BY ${sorter} ${order};`)
+        .then((result) => {
+            return result.rows;
+        })
+    }
+    return db
+    .query(`    SELECT  topic
+                FROM    articles`)
+    .then((result) => {
+        const topicParams = result.rows.map(thing => thing.topic)
+        console.log(topicParams)
+        const topicWhere = `WHERE A.topic='${topic}'`
+        if(!topicParams.includes(topic)){
+            return Promise.reject({
+                status: 404,
+                msg: `Topic: ${topic}, cannot be found`
+            })
+        }
+    return db
+    .query(`    SELECT  A.author,
+                        A.title,
+                        A.article_id,
+                        A.topic,
+                        A.created_at,
+                        A.votes,
+                        COUNT(B.article_id) AS comment_count
+                FROM    articles A
+                LEFT JOIN comments B ON A.article_id=A.article_id
+                ${topicWhere}
+                GROUP BY A.article_id
+                ORDER BY ${sorter} ${order};`)
+    .then((result) => {
+        return result.rows;
+    })
+    })
+}
 
 exports.selectUsers = () => {
     return db

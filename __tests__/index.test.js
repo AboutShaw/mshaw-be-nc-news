@@ -336,3 +336,82 @@ describe(`DELETE /api/comments/:comment_id tests`, () => {
         })
     })
 })
+
+describe(`GET /api/articles tests V2 including queries  `, () => {
+    describe(`GET tests for sortby`, () => {
+        test(`/api/articles?sort_by=topic&order_by=asc returns correctly`, () => {
+            return request(app)
+            .get("/api/articles?sort_by=topic&order_by=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles)
+                .toBeSortedBy('topic', {descending: false})
+                articles.forEach(article => 
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(String)
+                        })
+                    )
+                )
+                expect(articles.length).toBe(12)
+            })
+        })
+        test(`/api/articles?topic=mitch returns correctly`, () => {
+            return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles)
+                .toBeSortedBy('created_at', {descending: true})
+                articles.forEach(article => 
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: `mitch`,
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(String)
+                        })
+                    )
+                )
+                expect(articles.length).toBe(11)
+            })
+        })
+    })
+    describe(`Error handling tests`, () => {
+        test(`404 - Invalid topic returned as error`, () => {
+            return request(app)
+            .get(`/api/articles?topic=banana`)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe(`Topic: banana, cannot be found`);
+            })
+        })
+        test(`400 - Query not allowed, invalid query parameter`, () => {
+            return request(app)
+            .get(`/api/articles?sort_by=banana`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe(`Query not allowed`);
+            })
+        })
+        test(`400 - Order By not allowed, invalid order parameter`, () => {
+            return request(app)
+            .get(`/api/articles?order_by=INVALID`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe(`Query not allowed`);
+            })
+        })
+    })
+})
