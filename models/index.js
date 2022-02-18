@@ -66,7 +66,6 @@ exports.sortArticles = (sorter=`created_at`, order=`DESC`, topic) => {
                 FROM    articles`)
     .then((result) => {
         const topicParams = result.rows.map(thing => thing.topic)
-        console.log(topicParams)
         const topicWhere = `WHERE A.topic='${topic}'`
         if(!topicParams.includes(topic)){
             return Promise.reject({
