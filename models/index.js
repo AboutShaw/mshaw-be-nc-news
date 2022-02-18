@@ -230,7 +230,6 @@ exports.insertNewComment = (article_id, username, body) => {
                 RETURNING   *;`,
                 [body, article_id, username])
     .then(({ rows }) => {
-        
         return rows[0];
     })
 }
