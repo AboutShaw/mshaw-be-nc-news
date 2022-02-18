@@ -18,10 +18,8 @@ exports.getTopics = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const request = req.query;
-  console.log(request)
   if(request.length === 0) {
     selectArticles().then((articles) => {
-      console.log(`1.5`)
       res.status(200)
       .send({ articles })})
       .catch(next);
