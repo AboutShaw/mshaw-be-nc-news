@@ -336,3 +336,98 @@ describe(`DELETE /api/comments/:comment_id tests`, () => {
         })
     })
 })
+
+describe(`GET /api/articles tests V2 including queries  `, () => {
+    describe(`GET tests for sortby`, () => {
+        test(`/api/articles?sort_by=topic&order_by=asc returns correctly`, () => {
+            return request(app)
+            .get("/api/articles?sort_by=topic")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles)
+                .toBeSortedBy('topic', {descending: true})
+                articles.forEach(article => 
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(String)
+                        })
+                    )
+                )
+                expect(articles.length).toBe(12)
+            })
+        })
+        test(`/api/articles?sort_by=topic&order_by=asc returns correctly`, () => {
+            return request(app)
+            .get("/api/articles?sort_by=topic&order_by=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles)
+                .toBeSortedBy('topic', {descending: false})
+                articles.forEach(article => 
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(String)
+                        })
+                    )
+                )
+                expect(articles.length).toBe(12)
+            })
+        })
+        test(`/api/articles?topic=mitch returns correctly`, () => {
+            return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles)
+                .toBeSortedBy('created_at', {descending: true})
+                articles.forEach(article => 
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(String)
+                        })
+                    )
+                )
+                expect(articles.length).toBe(11)
+            })
+        })
+    })
+    describe.only(`Error handling tests`, () => {
+        test(`400 - Invalid topic returned as error`, () => {
+            return request(app)
+            .get(`/api/articles?topic=banana`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe(`Topic: banana, does not exist`);
+            })
+        })
+        test(`400 - Query not allowed, invalid query parameter`, () => {
+            return request(app)
+            .get(`/api/articles?sort_by=banana`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe(`Query not allowed`);
+            })
+        })
+    })
+})

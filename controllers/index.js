@@ -6,7 +6,8 @@ const {
   articleComments,
   updateArticleById,
   deleteComment,
-  insertNewComment
+  insertNewComment,
+  sortArticles
 } = require("../models/index");
 
 exports.getTopics = (req, res, next) => {
@@ -16,9 +17,19 @@ exports.getTopics = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-  selectArticles().then((articles) => {
-    res.status(200).send({ articles })})
-    .catch(next);
+  const request = req.query;
+  console.log(request)
+  if(request.length === 0) {
+    selectArticles().then((articles) => {
+      console.log(`1.5`)
+      res.status(200)
+      .send({ articles })})
+      .catch(next);
+  } else {
+    sortArticles(request.sort_by, request.order_by, request.topic).then((articles) => {
+        res.status(200).send({ articles })})
+        .catch(next);
+    };
 }
 
 exports.getUsers = (req, res, next) => {
