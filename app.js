@@ -1,3 +1,5 @@
+const cors = require('cors')
+
 const express = require("express");
 const {
   getTopics,
@@ -17,6 +19,7 @@ const {
     handleServerErrors,
   } = require('./errors/index.js');
 
+app.use(cors())
 const app = express();
 app.use(express.json());
 // Requires and util functions above this line -----
