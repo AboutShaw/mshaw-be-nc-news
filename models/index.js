@@ -125,11 +125,11 @@ exports.selectArticleById = (article_id) => {
                         A.topic,
                         A.created_at,
                         A.votes,
-                        COUNT(A.article_id) AS comment_count
+                        COUNT(B.article_id) AS comment_count
                 FROM    articles A
                 LEFT JOIN comments B ON A.article_id=A.article_id
                 WHERE   A.article_id = $1
-                GROUP BY A.article_id;`,
+                GROUP BY B.article_id;`,
       [article_id]
     )
     .then(({ rows }) => {
