@@ -129,7 +129,7 @@ exports.selectArticleById = (article_id) => {
                 FROM    articles A
                 LEFT JOIN comments B ON A.article_id=A.article_id
                 WHERE   A.article_id = $1
-                GROUP BY B.article_id;`,
+                GROUP BY A.article_id;`,
       [article_id]
     )
     .then(({ rows }) => {
