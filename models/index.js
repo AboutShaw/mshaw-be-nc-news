@@ -61,7 +61,7 @@ exports.sortArticles = (sorter = `created_at`, order = `DESC`, topic) => {
                             A.votes,
                             COUNT(B.article_id) AS comment_count
                         FROM    articles A
-                        LEFT JOIN comments B ON A.article_id=A.article_id
+                        LEFT JOIN comments B ON A.article_id=B.article_id
                         GROUP BY A.article_id
                         ORDER BY ${sorter} ${order};`
       )
