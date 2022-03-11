@@ -154,7 +154,7 @@ exports.articleComments = (article_id) => {
                         body
                 FROM    comments
                 WHERE   article_id=$1
-                ORDER BY created_at ASC`,
+                ORDER BY created_at DESC`,
       [article_id]
     )
     .then(({ rows }) => {
